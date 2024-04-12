@@ -102,16 +102,16 @@ variantCase proxy eacodec (Codec dec enc) = Codec.Codec dec' enc'
     tag ← decode (prop "tag" string) obj
     if tag == reflectSymbol proxy then
       case eacodec of
-        Left a → pure (inj proxy a)
+        Left a → pure (inj @l a)
         Right codec → do
           value ← decode (prop "value" json) obj
-          inj proxy <$> decode codec value
+          inj @l <$> decode codec value
     else
       coerceR <$> dec j
 
   enc' ∷ Variant r' → Tuple J.Json (Variant r')
   enc' v =
-    on proxy
+    on @l
       ( \v' → flip Tuple v $ encode jobject $
           FO.runST do
             obj ← FOST.new

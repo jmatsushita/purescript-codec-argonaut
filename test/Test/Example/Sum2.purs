@@ -7,7 +7,6 @@ import Data.Codec.Argonaut.Variant as CAV
 import Data.Either (Either(..))
 import Data.Profunctor (dimap)
 import Data.Variant as V
-import Type.Proxy (Proxy(..))
 
 data SomeValue2 = Str String | Int Int | Neither
 
@@ -20,9 +19,9 @@ codec =
     }
   where
     toVariant = case _ of
-      Str s → V.inj (Proxy ∷ _ "str") s
-      Int i → V.inj (Proxy ∷ _ "int") i
-      Neither → V.inj (Proxy ∷ _ "neither") unit
+      Str s → V.inj @"str" s
+      Int i → V.inj @"int" i
+      Neither → V.inj @"neither" unit
     fromVariant = V.match
       { str: Str
       , int: Int

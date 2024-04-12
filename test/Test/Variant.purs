@@ -56,11 +56,11 @@ codecMaybe codecA =
     )
   where
   toVariant = case _ of
-    Just a → V.inj _Just a
-    Nothing → V.inj _Nothing unit
+    Just a → V.inj @"just" a
+    Nothing → V.inj @"nothing" unit
   fromVariant = V.case_
-    # V.on _Just Just
-    # V.on _Nothing (const Nothing)
+    # V.on @"just" Just
+    # V.on @"nothing" (const Nothing)
   _Just = Proxy ∷ Proxy "just"
   _Nothing = Proxy ∷ Proxy "nothing"
 
@@ -74,8 +74,8 @@ codecMaybeMatch codecA =
     )
   where
   toVariant = case _ of
-    Just a → V.inj (Proxy ∷ _ "just") a
-    Nothing → V.inj (Proxy ∷ _ "nothing") unit
+    Just a → V.inj @"just" a
+    Nothing → V.inj @"nothing" unit
   fromVariant = V.match
     { just: Just
     , nothing: \_ → Nothing
@@ -90,11 +90,11 @@ codecEither codecA codecB =
     )
   where
   toVariant = case _ of
-    Left a → V.inj _Left a
-    Right b → V.inj _Right b
+    Left a → V.inj @"left" a
+    Right b → V.inj @"right" b
   fromVariant = V.case_
-    # V.on _Left Left
-    # V.on _Right Right
+    # V.on @"left" Left
+    # V.on @"right" Right
   _Left = Proxy ∷ Proxy "left"
   _Right = Proxy ∷ Proxy "right"
 
@@ -102,9 +102,9 @@ genVariant ∷ Gen TestVariant
 genVariant = do
   tag ← chooseInt 1 3
   case tag of
-    1 → V.inj (Proxy ∷ Proxy "a") <$> genInt
-    2 → V.inj (Proxy ∷ Proxy "b") <$> genAsciiString
-    _ → V.inj (Proxy ∷ Proxy "c") <$> GenC.genMaybe chooseBool
+    1 → V.inj @"a" <$> genInt
+    2 → V.inj @"b" <$> genAsciiString
+    _ → V.inj @"c" <$> GenC.genMaybe chooseBool
 
 codecVariant ∷ JA.JsonCodec TestVariant
 codecVariant = JAV.variantMatch
